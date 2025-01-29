@@ -10,10 +10,10 @@ module.exports = function (app) {
     })
 
     app.get('/api/get/order/:id', controller.getOrder);
-
+    app.get('/api/get/order/daily/salse', controller.getDailySalse);
     app.post('/api/post/order', controller.CreateOrder);
 
-    app.get('/api/get/user/order', jwt.verifyToken, controller.getTodaysOrder);
+    app.get('/api/get/user/order/monthly',  controller.getMonthlyOrder);
     
-    app.get('/api/get/user/order/:tran_id', jwt.verifyToken, controller.getLastWeekOrder);
+    app.get('/api/get/user/order/:tran_id', jwt.verifyToken, controller.getYearlyOrder);
 }

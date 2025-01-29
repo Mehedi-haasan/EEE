@@ -4,7 +4,6 @@ const ProductTemplate = db.productTemplete;
 const Op = db.Sequelize.Op;
 
 
-
 exports.getOrder = async (req, res) => {
 
     try {
@@ -29,6 +28,47 @@ exports.getOrder = async (req, res) => {
     }
 }
 
+async function groupSalesByHour(items) {
+    const groupedSales = {};
+
+    items.forEach(item => {
+        const date = new Date(item.createdAt);
+        const hour = date.getHours();
+
+        if (!groupedSales[hour]) {
+            groupedSales[hour] = { h: hour, sales: 0 };
+        }
+
+        groupedSales[hour].sales += item.price * item.qty;
+    });
+
+    return Object.values(groupedSales).sort((a, b) => a.h - b.h);
+}
+
+exports.getDailySalse = async (req, res) => {
+
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        let data = await SaleOrder.findAll({
+            where: {
+                createdAt: { [Op.gte]: today }
+            },
+            limit: 300,
+            order: [["createdAt", "DESC"]]
+        })
+        const calcutatedData = await groupSalesByHour(data);
+
+        res.status(200).send({
+            success: true,
+            items: calcutatedData
+        })
+
+    } catch (error) {
+        res.status(500).send({ success: false, message: error.message });
+    }
+}
 
 const UpdateProduct = async (orders) => {
     const updateProducts = orders
@@ -68,7 +108,6 @@ const UpdateProduct = async (orders) => {
     }
 };
 
-
 exports.CreateOrder = async (req, res) => {
     try {
         const orders = req.body;
@@ -86,8 +125,7 @@ exports.CreateOrder = async (req, res) => {
     }
 }
 
-
-exports.getTodaysOrder = async (req, res) => {
+exports.getYearlyOrder = async (req, res) => {
     try {
         let data = await SaleOrder.findAll({})
         res.status(200).send({
@@ -100,17 +138,52 @@ exports.getTodaysOrder = async (req, res) => {
     }
 }
 
-exports.getLastWeekOrder = async (req, res) => {
+const groupByDay = async (orders) => {
+    return orders.reduce((acc, order) => {
+        const date = new Date(order.createdAt).toISOString().split('T')[0];
+
+        if (!acc[date]) {
+            acc[date] = { totalSales: 0 };
+        }
+
+        acc[date].totalSales += order?.price * order?.qty || 0;
+
+        return acc;
+    }, {});
+};
+
+exports.getMonthlyOrder = async (req, res) => {
     try {
-        let data = await SaleOrder.findAll({})
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        let data = await SaleOrder.findAll({
+            where: {
+                createdAt: { [Op.gte]: firstDayOfMonth }
+            },
+            limit: 500,
+            order: [["createdAt", "DESC"]]
+        });
+
+        const groupedOrders = await groupByDay(data);
+
+
+        const dataPoints = Object.entries(groupedOrders).map(([dateStr, data]) => ({
+            x: new Date(dateStr),
+            y: data.totalSales
+        }));
+
+        dataPoints.sort((a, b) => a.x - b.x);
+
         res.status(200).send({
             success: true,
-            items: data
-        })
+            items: dataPoints 
+        });
 
     } catch (error) {
         res.status(500).send({ success: false, message: error.message });
     }
-}
+};
+
 
 

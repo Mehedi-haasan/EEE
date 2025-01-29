@@ -27,9 +27,9 @@ const Container = ({ children }) => {
 
     return (
         <div className='flex bg-gray-100 h-screen overflow-hidden sticky top-12'>
-            <div className='bg-white border-r-[1px] w-[400px] sticky top-14'>
-                <div className='p-5 h-screen overflow-y-auto'>
-                    <div className='flex justify-start gap-3 items-center pb-5 border-b-2'>
+            <div className='bg-white border-r-[1px] w-[400px] sticky top-14 shadow-lg'>
+                <div className='p-5 h-screen overflow-y-auto w-[400px] fixed top-14'>
+                    <div className='flex justify-start gap-3 items-center pb-5 border-b-2 w-[300px]'>
                         <div>
                             <img src={Logo} className='h-[75px] w-[75px] rounded-full justify-start' alt='Profile' />
                         </div>
@@ -56,7 +56,7 @@ const Container = ({ children }) => {
                 </div>
             </div>
 
-            <div className='w-full bg-gray-100 overflow-y-auto pl-1 pt-1'>
+            <div className='w-full bg-gray-100 overflow-y-auto pl-1.5 pt-1.5'>
                 {children}
             </div>
         </div>

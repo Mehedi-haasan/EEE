@@ -3,8 +3,8 @@ import CanvasJSReact from '@canvasjs/react-charts';
 
 const { CanvasJSChart } = CanvasJSReact;
 
-const Charts7 = () => {
-  
+const Charts7 = ({ month }) => {
+  console.log(month)
   const options = {
     animationEnabled: true,
     theme: "light2",
@@ -12,7 +12,7 @@ const Charts7 = () => {
       text: "Monthly Sales Data"
     },
     axisX: {
-      valueFormatString: "MMM"
+      valueFormatString: "DD MMM" // Display day and month
     },
     axisY: {
       prefix: "$",
@@ -29,65 +29,26 @@ const Charts7 = () => {
       {
         type: "column",
         name: "Actual Sales",
-        showInLegend: true,
-        xValueFormatString: "MMMM YYYY",
+        showInLegend: false,
+        xValueFormatString: "DD MMM YYYY",
         yValueFormatString: "$#,##0",
-        dataPoints: [
-          { x: new Date(2016, 0), y: 20000 },
-          { x: new Date(2016, 1), y: 30000 },
-          { x: new Date(2016, 2), y: 25000 },
-          { x: new Date(2016, 3), y: 70000, indexLabel: "High Renewals" },
-          { x: new Date(2016, 4), y: 50000 },
-          { x: new Date(2016, 5), y: 35000 },
-          { x: new Date(2016, 6), y: 30000 },
-          { x: new Date(2016, 7), y: 43000 },
-          { x: new Date(2016, 8), y: 35000 },
-          { x: new Date(2016, 9), y: 30000 },
-          { x: new Date(2016, 10), y: 40000 },
-          { x: new Date(2016, 11), y: 50000 }
-        ]
+        dataPoints: month
       },
       {
         type: "line",
         name: "Expected Sales",
-        showInLegend: true,
+        showInLegend: false,
         yValueFormatString: "$#,##0",
-        dataPoints: [
-          { x: new Date(2016, 0), y: 40000 },
-          { x: new Date(2016, 1), y: 42000 },
-          { x: new Date(2016, 2), y: 45000 },
-          { x: new Date(2016, 3), y: 45000 },
-          { x: new Date(2016, 4), y: 47000 },
-          { x: new Date(2016, 5), y: 43000 },
-          { x: new Date(2016, 6), y: 42000 },
-          { x: new Date(2016, 7), y: 43000 },
-          { x: new Date(2016, 8), y: 41000 },
-          { x: new Date(2016, 9), y: 45000 },
-          { x: new Date(2016, 10), y: 42000 },
-          { x: new Date(2016, 11), y: 50000 }
-        ]
+        dataPoints: month
       },
       {
         type: "area",
         name: "Profit",
         markerBorderColor: "white",
         markerBorderThickness: 2,
-        showInLegend: true,
+        showInLegend: false,
         yValueFormatString: "$#,##0",
-        dataPoints: [
-          { x: new Date(2016, 0), y: 5000 },
-          { x: new Date(2016, 1), y: 7000 },
-          { x: new Date(2016, 2), y: 6000 },
-          { x: new Date(2016, 3), y: 30000 },
-          { x: new Date(2016, 4), y: 20000 },
-          { x: new Date(2016, 5), y: 15000 },
-          { x: new Date(2016, 6), y: 13000 },
-          { x: new Date(2016, 7), y: 20000 },
-          { x: new Date(2016, 8), y: 15000 },
-          { x: new Date(2016, 9), y: 10000 },
-          { x: new Date(2016, 10), y: 19000 },
-          { x: new Date(2016, 11), y: 22000 }
-        ]
+        dataPoints: month
       }
     ]
   };
