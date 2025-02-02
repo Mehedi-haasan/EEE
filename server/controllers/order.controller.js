@@ -152,6 +152,8 @@ const groupByDay = async (orders) => {
     }, {});
 };
 
+
+
 exports.getMonthlyOrder = async (req, res) => {
     try {
         const today = new Date();
@@ -184,6 +186,8 @@ exports.getMonthlyOrder = async (req, res) => {
         res.status(500).send({ success: false, message: error.message });
     }
 };
+
+
 
 
 

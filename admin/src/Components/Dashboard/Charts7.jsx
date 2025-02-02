@@ -15,7 +15,7 @@ const Charts7 = ({ month }) => {
       valueFormatString: "DD MMM" // Display day and month
     },
     axisY: {
-      prefix: "$",
+      prefix: "Tk",
       labelFormatter: addSymbols
     },
     toolTip: {
@@ -31,14 +31,14 @@ const Charts7 = ({ month }) => {
         name: "Actual Sales",
         showInLegend: false,
         xValueFormatString: "DD MMM YYYY",
-        yValueFormatString: "$#,##0",
+        yValueFormatString: "Tk#,##0",
         dataPoints: month
       },
       {
         type: "line",
         name: "Expected Sales",
         showInLegend: false,
-        yValueFormatString: "$#,##0",
+        yValueFormatString: "Tk#,##0",
         dataPoints: month
       },
       {
@@ -47,7 +47,7 @@ const Charts7 = ({ month }) => {
         markerBorderColor: "white",
         markerBorderThickness: 2,
         showInLegend: false,
-        yValueFormatString: "$#,##0",
+        yValueFormatString: "Tk#,##0",
         dataPoints: month
       }
     ]
