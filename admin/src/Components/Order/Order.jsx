@@ -48,7 +48,7 @@ const Order = () => {
         <div className='bg-white relative'>
             <div className='flex justify-between items-center py-3 px-4'>
                 <div>
-                    <h1 className='font-semibold'>Order</h1>
+                    <h1 className='font-semibold'>Todays Order</h1>
                 </div>
                 <div className='flex justify-start items-center gap-3'>
                     <input type='text' placeholder='Enter your order id' onChange={SearchProduct} className='px-2 py-1 rounded focus:outline-none border' />
@@ -70,9 +70,6 @@ const Order = () => {
                             </th>
                             <th scope="col" className="pl-1 py-3">
                                 Product name
-                            </th>
-                            <th scope="col" className="px-4 py-3">
-                                Attribute
                             </th>
                             <th scope="col" className="px-4 py-3">
                                 Category
@@ -105,8 +102,8 @@ const Order = () => {
                     </thead>
                     <tbody>
                         {
-                            data?.map(({ id, name, qty, state, address, status, product_product, note,paymentstatus }) => {
-                                return <OrderCard key={id} id={id} name={name} qty={qty} state={state} address={address} status={status} product_product={product_product} note={note} paymentstatus={paymentstatus}/>
+                            data?.map(({ id, name,price, qty, contact, product}) => {
+                                return <OrderCard key={id} id={id} name={name} price={price} contact={contact} qty={qty} product={product}/>
                             })
                         }
                     </tbody>

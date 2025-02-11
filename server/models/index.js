@@ -30,21 +30,28 @@ db.productTemplete = require("../models/ProductModel")(sequelize, Sequelize);
 db.saleorder = require("./saleorder.model")(sequelize, Sequelize);
 db.company = require("./company.model")(sequelize, Sequelize);
 db.message = require("./message.model")(sequelize, Sequelize);
+db.state = require("./state.model")(sequelize, Sequelize);
+db.category = require("./category")(sequelize, Sequelize);
 
 // relation between tables
 
-
-
-
-
 // Sale Order
-
 db.productTemplete.hasMany(db.saleorder,{
   foreignKey:"product_id",
   onDelete: 'CASCADE',
 })
 db.saleorder.belongsTo(db.productTemplete,{
   foreignKey:"product_id",
+  onDelete: 'CASCADE',
+})
+
+// State
+db.user.hasMany(db.state,{
+  foreignKey:"userId",
+  onDelete: 'CASCADE',
+})
+db.state.belongsTo(db.user,{
+  foreignKey:"userId",
   onDelete: 'CASCADE',
 })
 

@@ -20,7 +20,7 @@
     },
     {
         "id":"3",
-        "name":"Sell",
+        "name":"New Order/Invoice",
         "route":"sell",
         "icon":"uil:create-dashboard"
 
@@ -29,6 +29,12 @@
         "id":"1",
         "name":"Single Order",
         "route":"user/order",
+        "icon":"bxs:category-alt"
+    },
+    {
+        "id":"1",
+        "name":"Category",
+        "route":"category",
         "icon":"bxs:category-alt"
     },
     {

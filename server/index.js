@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const SSLCommerzPayment = require('sslcommerz-lts');
 const cors = require('cors');
 const app = express();
 const port = 8050;
@@ -16,10 +15,6 @@ const io = new Server(server, {
     }
 });
 
-
-const store_id = 'qubic66e072f1d9e9d';
-const store_passwd = 'qubic66e072f1d9e9d@ssl';
-const is_live = false; 
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -40,10 +35,10 @@ require('./routes/imageupload.routes')(app);
 require('./routes/payment.routes')(app);
 require('./routes/message.routes')(app);
 require('./routes/order.routes')(app);
+require('./routes/state.routes')(app);
+require('./routes/category')(app);
 
-const Role = db.role;
-
-// db.sequelize.sync({ force: true }).then(async () => {
+// db.sequelize.sync({ force: false }).then(async () => {
 //     // await initStates();
 //     // await initUserRoles();
 //     // await initCarousel();
@@ -51,6 +46,7 @@ const Role = db.role;
 //     // await initProductAttributes();
 //     // await initProductAttributeValues();
 // });
+
 
 
 const DB = require('./models');

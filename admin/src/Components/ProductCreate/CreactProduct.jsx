@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import InputComponent from '../Input/InputComponent'
@@ -8,12 +8,13 @@ import SelectionComponent from '../Input/SelectionComponent'
 
 const CreactProduct = () => {
 
-    const [image_url, setImage_Url] = useState()
-    let type = [{ id: 1, name: "Tab" }, { id: 2, name: "Injection" }, { id: 3, name: "Antebiotic" }]
+    const [image_url, setImage_Url] = useState();
+    const [category, setCategory] = useState([])
+    let type = [{ id: 1, name: "Physical" }, { id: 2, name: "Digital" }]
     const [value, setValue] = useState('')
     const [values, setValues] = useState({
         category: "",
-        qty:0,
+        qty: 0,
         product_type: true,
     })
 
@@ -74,11 +75,21 @@ const CreactProduct = () => {
         }
     }
 
+    useEffect(() => {
+        const GetCategory = async () => {
+            const response = await fetch(`http://localhost:8050/api/get/category`);
+            const data = await response.json();
+            setCategory(data?.items || [])
+        }
+
+        GetCategory()
+    }, [])
+
 
 
     return (
         <div className=''>
-            <div className='border'>
+            <div className=''>
                 <h1 className='text-3xl font-semibold text-center py-5'>Product Create</h1>
 
                 <div className='max-w-[600px] mx-auto border border-[#c71f66] rounded-lg p-5'>
@@ -92,7 +103,7 @@ const CreactProduct = () => {
                         <InputComponent onChange={(e) => setValues({ ...values, cost: e })} label={"Cost Price"} placeholder={"Cost Price"} type={"number"} isRequered={""} />
                         <InputComponent onChange={(e) => setValues({ ...values, price: e })} label={"Sell Price"} placeholder={"Sell Price"} type={"number"} isRequered={""} />
                         <InputComponent onChange={(e) => setValues({ ...values, standard_price: e })} label={"Standrard Price"} placeholder={"Standrard Price"} type={"number"} isRequered={""} />
-                        <SelectionComponent options={type} onSelect={(e) => setValues({ ...values, category: e })} label={"Product Category"} />
+                        <SelectionComponent options={category} onSelect={(e) => setValues({ ...values, category: e })} label={"Product Category"} />
                         <div className='my-2 grid col-span-2'>
                             <h1 className='font-semibold py-1'>Description</h1>
                             <ReactQuill theme="snow" value={value} onChange={setValue} />

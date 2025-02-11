@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Icon } from "@iconify/react";
 import Logo from '../src/Components/Logo/userProfile.png'
 
-const Container = ({ children }) => {
+const Container = ({ children, isLoggedOut }) => {
 
     const [userInfo, setUserInfo] = useState({})
 
@@ -40,14 +40,14 @@ const Container = ({ children }) => {
                     </div>
                     <div className='pt-4 items-center'>
                         {data.map((item) => (
-                            <NavLink key={item.id} to={`/${item.route}`} className='flex font-bold text-lg hover:bg-gray-200 rounded justify-start items-center gap-2 p-2'>
+                            <NavLink key={item.id} to={`/${item.route}`} className='flex font-bold w-[300px] text-lg hover:bg-gray-200 rounded justify-start items-center gap-2 p-2'>
                                 <Icon icon={item.icon} width='20px' />
                                 {item.name}
                             </NavLink>
                         ))}
 
 
-                        <NavLink to={`/`} onClick={() => { localStorage.setItem('token', '') }} className='font-bold text-lg hover:bg-gray-200 rounded flex justify-start items-center gap-2 p-2 w-full'>
+                        <NavLink to={`/`} onClick={() => { localStorage.setItem('token', ''); isLoggedOut() }} className='font-bold w-[300px] text-lg hover:bg-gray-200 rounded flex justify-start items-center gap-2 p-2'>
                             <Icon icon={"uiw:logout"} width='20px' />
                             {'Logout'}
                         </NavLink>

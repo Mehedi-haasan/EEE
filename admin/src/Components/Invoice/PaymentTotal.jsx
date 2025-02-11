@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react'
 
-const PaymentTotal = ({ data }) => {
+const PaymentTotal = ({ data, dis, discount, discountType }) => {
     const [total, setTotal] = useState(0);
-    console.log(data, "aewrtgr")
+    
     useEffect(() => {
-        let amount = data.reduce((acc, d) => acc + (parseInt(d?.price) * parseInt(d?.qty) || 0), 0); 
-        setTotal(amount);
-    }, [data]);
+        let amount = data.reduce((acc, d) => acc + (parseInt(d?.price) * parseInt(d?.qty) || 0), 0);
+        setTotal(amount - dis);
+    }, [data,dis]);
+
+    function convertToBengaliNumber(num) {
+        const bengaliDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+        return num.toString().replace(/\d/g, (digit) => bengaliDigits[digit]);
+    }
 
     return (
         <>
@@ -17,11 +22,17 @@ const PaymentTotal = ({ data }) => {
                 <td className="px-6 py-3 text-center">
 
                 </td>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+
+                </td>
                 <td className="px-6 py-3 text-center text-black font-semibold">
-                    Subtotal
+                    মোট
                 </td>
                 <td className="pl-6 py-3 text-right">
-                    {total} tk
+                    {convertToBengaliNumber(total)}.০
                 </td>
             </tr>
             <tr className="bg-white">
@@ -31,25 +42,142 @@ const PaymentTotal = ({ data }) => {
                 <td className="px-6 py-2 text-center">
 
                 </td>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+
+                </td>
                 <td className="px-6 py-2 text-center border-b-2 border-black text-black font-semibold">
-                    Tax
+                    প্যাকিং
                 </td>
                 <td className="pl-6 py-2 text-right border-b-2 border-black">
-                    35 tk
+                    ০০.০
+                </td>
+            </tr>
+            <tr className="bg-white">
+                <th scope="row" className="pr-6 py-3 text-black">
+                    সর্বমোট
+                </th>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center text-xl text-black ">
+                    সর্বমোট
+                </td>
+                <td className="pl-6 py-3 text-right">
+                    {convertToBengaliNumber(total * 1)}.০
+                </td>
+            </tr>
+
+            <tr className="bg-white">
+                <th scope="row" className="pr-6 py-3">
+
+                </th>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center text-xl text-black">
+                    ডিসকাউন্ট
+                </td>
+                {
+                    discountType === "Percentage" ? <td className="pl-6 py-3 text-right">
+                        <input type='' placeholder={convertToBengaliNumber(dis)} onChange={discount} className='w-10 text-right focus:outline-none gap-1' /> %
+                    </td> : <td className="pl-6 py-3 text-right">
+                        <input type='' placeholder={convertToBengaliNumber(dis)} onChange={discount} className='w-10 text-right focus:outline-none gap-1' />
+                    </td>
+                }
+            </tr>
+            <tr className="bg-white ">
+                <th scope="row" className="pr-6 py-3">
+
+                </th>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center text-xl border-b-2 border-black text-black">
+                    আগের বকেয়া
+                </td>
+                <td className="pl-6 py-3 text-right border-b-2 border-black text-black">
+                    {convertToBengaliNumber(total)}.০
                 </td>
             </tr>
             <tr className="bg-white">
                 <th scope="row" className="pr-6 py-3">
 
                 </th>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center text-xl text-black ">
+                    অবশিষ্ট
+                </td>
+                <td className="pl-6 py-3 text-right">
+                    {convertToBengaliNumber(total)}.০
+                </td>
+            </tr>
+            <tr className="bg-white">
+                <th scope="row" className="pr-6 py-3">
+
+                </th>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center">
+
+                </td>
+                <td className="px-6 py-3 text-center text-xl border-b-2 border-black text-black">
+                    জমা
+                </td>
+                <td className="pl-6 py-3 text-right border-b-2 border-black text-black">
+                    {convertToBengaliNumber(total)}.০
+                </td>
+            </tr>
+            <tr className="bg-white">
+                <th scope="row" className="pr-6 py-3">
+                    <h1 className='font-semibold text-lg text-black'>বিতরনকারী</h1>
+                </th>
+                <th scope="row" className="pr-6 py-3 ">
+
+                </th>
+                <td className="px-6 py-3 text-center">
+                    <h1 className='font-semibold text-lg text-black'>ম্যানেজার</h1>
+                </td>
                 <td className="px-6 py-3 text-center">
 
                 </td>
                 <td className="px-6 py-3 text-center text-xl text-black font-bold">
-                    Total
+                    মোট বাকি
                 </td>
                 <td className="pl-6 py-3 text-right">
-                    {total + 35} tk
+                    {convertToBengaliNumber(total)}.০
                 </td>
             </tr>
         </>

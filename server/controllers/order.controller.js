@@ -4,6 +4,29 @@ const ProductTemplate = db.productTemplete;
 const Op = db.Sequelize.Op;
 
 
+exports.getAllOrder = async (req, res) => {
+
+    try {
+        let data = await SaleOrder.findAll({
+            limit: 14,
+            include: [
+                {
+                    model: ProductTemplate,
+
+                }
+            ],
+            order: [["createdAt", "DESC"]]
+        })
+        res.status(200).send({
+            success: true,
+            items: data
+        })
+
+    } catch (error) {
+        res.status(500).send({ success: false, message: error.message });
+    }
+}
+
 exports.getOrder = async (req, res) => {
 
     try {
@@ -11,6 +34,35 @@ exports.getOrder = async (req, res) => {
             limit: 10,
             where: {
                 invoice_id: req.params.id
+            },
+            include: [
+                {
+                    model: ProductTemplate,
+                }
+            ]
+        })
+        res.status(200).send({
+            success: true,
+            items: data
+        })
+
+    } catch (error) {
+        res.status(500).send({ success: false, message: error.message });
+    }
+}
+
+function getFormattedDate() {
+    const date = new Date();
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    return date.toLocaleDateString('bn-BD', options);
+}
+
+exports.getTodatOrder = async (req, res) => {
+
+    try {
+        let data = await SaleOrder.findAll({
+            where: {
+                date: getFormattedDate()
             },
             include: [
                 {
@@ -179,7 +231,7 @@ exports.getMonthlyOrder = async (req, res) => {
 
         res.status(200).send({
             success: true,
-            items: dataPoints 
+            items: dataPoints
         });
 
     } catch (error) {

@@ -1,22 +1,23 @@
-import { NavLink, useNavigate, } from "react-router-dom";
-import { useState } from "react";
-import logo from "../Logo/Mahlun.PNG"
+import { NavLink } from "react-router-dom";
 import Notification from "../../icons/Notification";
 import MessageBar from "./MessageBar";
+import logo from '../Logo/library.png'
 
 
 const Header = ({ auth }) => {
   function generateRandomNumber() {
     return Math.floor(Math.random() * 20) + 1;
-}
+  }
 
   return (
     <div className="sticky top-0 z-50 shadow">
 
-      <div className="flex justify-between items-center sticky top-0 z-50 w-[98%] mx-auto bg-white py-1">
+      <div className="flex justify-between items-center sticky top-0 z-50 w-[100%] px-2 mx-auto bg-white py-1">
 
         <div className="">
-          <NavLink className={`font-bold text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-[#FB923C] py-2`} to="/">Name/Logu</NavLink>
+          <NavLink className={`font-bold text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-[#FB923C] py-2`} to="/">
+          <img src={logo} alt="dhyfg" className="w-[70px] h-[50px] p-1"/>
+          </NavLink>
         </div>
 
 

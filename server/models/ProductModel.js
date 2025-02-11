@@ -38,6 +38,7 @@ module.exports = (sequelize, Sequelize) => {
         product_type: {
             type: Sequelize.BOOLEAN,
         },
+        
     });
 
     return ProductTemplate;

@@ -2,7 +2,7 @@ import React from 'react';
 import Edit from '../../icons/Edit';
 import Remove from '../../icons/Remove';
 
-const CategoryCard = ({ product, onClick }) => {
+const SellCard = ({ product, onClick }) => {
 
 
     return (
@@ -28,12 +28,12 @@ const CategoryCard = ({ product, onClick }) => {
             </td>
             <td className="px-4 py-4" dangerouslySetInnerHTML={{ __html: product?.description }} />
 
-            <td className="pl-4 py-4 pr-5 flex justify-end gap-2 items-center">
+            {/* <td className="pl-4 py-4 pr-5 flex justify-end gap-2 items-center">
                 <Edit size='25px' />
                 <Remove size='25px' />
-            </td>
+            </td> */}
         </tr>
     );
 };
 
-export default CategoryCard;
+export default SellCard;
