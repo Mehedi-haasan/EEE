@@ -1,5 +1,6 @@
 const db = require("../models");
 const SaleOrder = db.saleorder;
+const UserDue = db.userdue;
 const ProductTemplate = db.productTemplete;
 const Op = db.Sequelize.Op;
 
@@ -160,11 +161,25 @@ const UpdateProduct = async (orders) => {
     }
 };
 
+
+const UpdateDue = async (userId, userdue) => {
+    const data = await UserDue.findOne({
+        where: {
+            userId: userId
+        }
+    });
+
+    if(data){
+        console.log("Update");
+    }
+}
+
 exports.CreateOrder = async (req, res) => {
     try {
-        const orders = req.body;
+        const { orders, userId, due } = req.body;
         await SaleOrder.bulkCreate(orders);
         const data = await UpdateProduct(orders)
+        const userDue = await UpdateDue(userId, due)
         res.status(200).send({
             success: true,
             message: "Order Create Successfull",
@@ -203,8 +218,6 @@ const groupByDay = async (orders) => {
         return acc;
     }, {});
 };
-
-
 
 exports.getMonthlyOrder = async (req, res) => {
     try {

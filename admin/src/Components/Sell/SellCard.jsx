@@ -1,37 +1,32 @@
 import React from 'react';
-import Edit from '../../icons/Edit';
-import Remove from '../../icons/Remove';
 
 const SellCard = ({ product, onClick }) => {
 
+    function convertToBengaliNumber(num) {
+        const bengaliDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
+        return num.toString().replace(/\d/g, (digit) => bengaliDigits[digit]);
+    }
 
     return (
-        <tr onClick={onClick} className="bg-white cursor-pointer border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-
-            <th scope="row" className="px-4 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                {product?.name}
-            </th>
-            <td className="px-4 py-4">
-                {product?.category}
-            </td>
-            <td className="px-4 py-4">
-                {product?.price}
-            </td>
-            <td className="px-4 py-4">
-                {product?.standard_price}
-            </td>
-            <td className="px-4 py-4">
+        <tr key={product?.id} onClick={onClick} className="bg-white dark:bg-gray-800 border-b">
+            <th scope="row" className="pr-6 pl-3 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 {product?.qty}
+            </th>
+            <td className="px-6 py-3 text-center">
+                {product?.name}
             </td>
-            <td className="px-4 py-4">
-                {"True"}
+            <td className="px-6 py-3 text-center">
+                {"Islamia Library"}
             </td>
-            <td className="px-4 py-4" dangerouslySetInnerHTML={{ __html: product?.description }} />
-
-            {/* <td className="pl-4 py-4 pr-5 flex justify-end gap-2 items-center">
-                <Edit size='25px' />
-                <Remove size='25px' />
-            </td> */}
+            <td className="pl-6 py-3 text-right">
+                {convertToBengaliNumber(product?.price)}
+            </td>
+            <td className="pl-6 py-3 text-right">
+                {convertToBengaliNumber(product?.price * product.qty)}
+            </td>
+            <td className="pl-6 py-3 text-right">
+                {convertToBengaliNumber(product?.price * product.qty)}
+            </td>
         </tr>
     );
 };

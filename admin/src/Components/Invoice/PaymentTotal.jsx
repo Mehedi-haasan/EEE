@@ -1,17 +1,31 @@
 import React, { useEffect, useState } from 'react'
 
-const PaymentTotal = ({ data, dis, discount, discountType }) => {
+const PaymentTotal = ({ data, flatDiscount, percentageDiscount, discountFlat, discountPercentage, discountType, due, pay, setTotalPrice }) => {
     const [total, setTotal] = useState(0);
-    
+    const [actualPrice, setActualPrice] = useState(0);
+
     useEffect(() => {
         let amount = data.reduce((acc, d) => acc + (parseInt(d?.price) * parseInt(d?.qty) || 0), 0);
-        setTotal(amount - dis);
-    }, [data,dis]);
+        setTotalPrice(amount)
+        setActualPrice(amount)
+        if (discountType === "Percentage") {
+            let discountAmount = (parseInt(percentageDiscount) * parseInt(amount)) / 100;
+            setTotal(amount - discountAmount);
+        } else {
+            let discountParcent = flatDiscount * 100 / amount;
+            console.log(parseInt(discountParcent));
+            setTotal(amount - flatDiscount);
+        }
+
+    }, [data, flatDiscount, percentageDiscount, discountType]);
+
 
     function convertToBengaliNumber(num) {
         const bengaliDigits = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
         return num.toString().replace(/\d/g, (digit) => bengaliDigits[digit]);
     }
+
+
 
     return (
         <>
@@ -32,7 +46,7 @@ const PaymentTotal = ({ data, dis, discount, discountType }) => {
                     মোট
                 </td>
                 <td className="pl-6 py-3 text-right">
-                    {convertToBengaliNumber(total)}.০
+                    {convertToBengaliNumber(actualPrice)}.০
                 </td>
             </tr>
             <tr className="bg-white">
@@ -72,7 +86,7 @@ const PaymentTotal = ({ data, dis, discount, discountType }) => {
                     সর্বমোট
                 </td>
                 <td className="pl-6 py-3 text-right">
-                    {convertToBengaliNumber(total * 1)}.০
+                    {convertToBengaliNumber(actualPrice * 1)}.০
                 </td>
             </tr>
 
@@ -94,9 +108,9 @@ const PaymentTotal = ({ data, dis, discount, discountType }) => {
                 </td>
                 {
                     discountType === "Percentage" ? <td className="pl-6 py-3 text-right">
-                        <input type='' placeholder={convertToBengaliNumber(dis)} onChange={discount} className='w-10 text-right focus:outline-none gap-1' /> %
+                        <input type='' value={percentageDiscount} placeholder={convertToBengaliNumber(percentageDiscount)} onChange={discountPercentage} className='w-10 text-right focus:outline-none gap-1' /> %
                     </td> : <td className="pl-6 py-3 text-right">
-                        <input type='' placeholder={convertToBengaliNumber(dis)} onChange={discount} className='w-10 text-right focus:outline-none gap-1' />
+                        <input type='' value={flatDiscount} placeholder={convertToBengaliNumber(flatDiscount)} onChange={discountFlat} className='w-10 text-right focus:outline-none gap-1' />
                     </td>
                 }
             </tr>
@@ -117,7 +131,7 @@ const PaymentTotal = ({ data, dis, discount, discountType }) => {
                     আগের বকেয়া
                 </td>
                 <td className="pl-6 py-3 text-right border-b-2 border-black text-black">
-                    {convertToBengaliNumber(total)}.০
+                    {convertToBengaliNumber(parseInt(due))}.০
                 </td>
             </tr>
             <tr className="bg-white">
@@ -137,7 +151,7 @@ const PaymentTotal = ({ data, dis, discount, discountType }) => {
                     অবশিষ্ট
                 </td>
                 <td className="pl-6 py-3 text-right">
-                    {convertToBengaliNumber(total)}.০
+                    {convertToBengaliNumber(total + due)}.০
                 </td>
             </tr>
             <tr className="bg-white">
@@ -157,7 +171,7 @@ const PaymentTotal = ({ data, dis, discount, discountType }) => {
                     জমা
                 </td>
                 <td className="pl-6 py-3 text-right border-b-2 border-black text-black">
-                    {convertToBengaliNumber(total)}.০
+                    {convertToBengaliNumber(pay)}.০
                 </td>
             </tr>
             <tr className="bg-white">
@@ -177,7 +191,7 @@ const PaymentTotal = ({ data, dis, discount, discountType }) => {
                     মোট বাকি
                 </td>
                 <td className="pl-6 py-3 text-right">
-                    {convertToBengaliNumber(total)}.০
+                    {convertToBengaliNumber(total + due - pay)}.০
                 </td>
             </tr>
         </>

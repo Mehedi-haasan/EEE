@@ -15,10 +15,25 @@ module.exports = (sequelize, Sequelize) => {
         product_id: {
             type: Sequelize.INTEGER,
         },
+        username: {
+            type: Sequelize.STRING,
+        },
+        userId: {
+            type: Sequelize.INTEGER,
+        },
         name: {
             type: Sequelize.STRING
         },
         price: {
+            type: Sequelize.INTEGER,
+        },
+        discount: {
+            type: Sequelize.INTEGER,
+        },
+        discountType: {
+            type: Sequelize.STRING,
+        },
+        sellprice: {
             type: Sequelize.INTEGER,
         },
         qty: {

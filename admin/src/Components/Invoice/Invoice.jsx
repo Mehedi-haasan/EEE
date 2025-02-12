@@ -12,17 +12,29 @@ import SelectionComponent from '../Input/SelectionComponent'
 const Invoice = ({ isOrder = true }) => {
 
     const [data, setData] = useState({});
+    const [total, setTotal] = useState(0);
+    const [stateName, setStateName] = useState('Tangail')
+    const [name, setName] = useState('Mehedi hasan')
+    const [qty, setQty] = useState(0);
+    const [due, setDue] = useState(1000);
+    const [pay, setPay] = useState(500)
     const [invoice_id, setInvoiceId] = useState(Date.now())
     const [allData, setAllData] = useState([])
     const [searchData, setSearchData] = useState([]);
     const [show, setShow] = useState(false);
+    const [isPdf, setPdf] = useState(false);
     const [state, setState] = useState([]);
     const [user, setUser] = useState([]);
+    const [userId, setUserId] = useState(1);
     const [mobile, setMobile] = useState('')
-    const [discount, setDiscount] = useState(0);
-    const [discountType, setDiscountType] = useState("");
+    const [flatDiscount, setFlatDiscount] = useState(0);
+    const [percentageDiscount, setPercentageDiscount] = useState(0);
+    const [discountType, setDiscountType] = useState("Percentage");
     const [date, setDate] = useState('');
-    let type = [{ id: 1, name: "Flat Discount" }, { id: 2, name: "Percentage" }]
+    let type = [
+        { id: 1, name: "Percentage" },
+        { id: 2, name: "Flat Discount" }
+    ]
 
     const SearchProduct = async (e) => {
         e.preventDefault();
@@ -52,6 +64,7 @@ const Invoice = ({ isOrder = true }) => {
             doc.addImage(imgData, 'PNG', 0, 0, componentWidth, componentHeight);
             doc.save('receipt.pdf');
         })
+        setPdf(false)
     }
 
     const PrintfPdf = () => {
@@ -60,18 +73,25 @@ const Invoice = ({ isOrder = true }) => {
 
     const Order = async () => {
         const token = localStorage.getItem('token');
+        let dis = discountType === "Percentage" ? percentageDiscount : (parseInt(flatDiscount) * 100) / total;
         let orderData = [];
         allData?.map((v) => (
             orderData.push({
                 "invoice_id": invoice_id,
                 "product_id": v?.id,
-                "date": date,
+                "username": name,
+                "userId": userId,
                 "name": v?.name,
                 "price": v?.price,
+                "discount": parseInt(dis),
+                "discountType": discountType,
+                "sellprice": v?.price * v?.qty * total / 100,
                 "qty": v?.qty,
-                "contact": mobile
+                "contact": mobile,
+                "date": date,
             })
         ))
+        console.log(orderData);
         try {
             const response = await fetch('http://localhost:8050/api/post/order', {
                 method: 'POST',
@@ -79,7 +99,11 @@ const Invoice = ({ isOrder = true }) => {
                     'authorization': token,
                     'Content-type': 'application/json; charset=UTF-8',
                 },
-                body: JSON.stringify(orderData),
+                body: JSON.stringify({
+                    userId:userId,
+                    due:100,
+                    orders:orderData
+                }),
             });
 
             const data = await response.json();
@@ -110,6 +134,7 @@ const Invoice = ({ isOrder = true }) => {
 
 
     const handleSelect = (value) => {
+        setStateName(value)
         const user = state.filter((sta) => sta?.name === value);
         setUser(user[0]?.users || [])
     }
@@ -118,7 +143,7 @@ const Invoice = ({ isOrder = true }) => {
         <div className="bg-white">
 
             <div className='w-full mx-auto border min-h-[90vh] rounded'>
-                <div className="actual-receipt mt-4 px-10">
+                <div className="mt-4 px-10">
                     <div>
                         <div className='flex justify-between'>
                             <div className='flex justify-start gap-3 items-center'>
@@ -141,7 +166,7 @@ const Invoice = ({ isOrder = true }) => {
                                 <h1 className='font-semibold w-[90px]'>নাম</h1>
                                 <div className='flex justify-start items-center gap-3'>
                                     <h1 className='font-semibold'>:</h1>
-                                    <SelectionComponent options={user} onSelect={(v) => { }} label={''} />
+                                    <SelectionComponent options={user} onSelect={(v) => { setName(v); setUserId(v) }} label={''} />
                                 </div>
                             </div>
                             <div className='flex justify-start gap-3 items-center'>
@@ -158,14 +183,14 @@ const Invoice = ({ isOrder = true }) => {
                                 <h1 className='font-semibold w-[90px]'>মোবাইল</h1>
                                 <div className='flex justify-start items-center gap-3'>
                                     <h1 className='font-semibold'>:</h1>
-                                    <input placeholder='Mobile number' onChange={(e) => { setMobile(e.target.value) }} className='border focus:outline-none rounded p-1 border-black text-black' />
+                                    <input placeholder='মোবাইল নম্বর' onChange={(e) => { setMobile(e.target.value) }} className='border focus:outline-none rounded p-1 border-black text-black' />
                                 </div>
                             </div>
                             <div className='flex justify-end gap-3 items-center'>
                                 <h1 className='font-semibold'>ডিসকাউন্ট</h1>
                                 <div className='flex justify-start items-center gap-3'>
                                     <h1 className='font-semibold'>:</h1>
-                                    <SelectionComponent options={type} onSelect={(v) => { setDiscountType(v)}} label={''} />
+                                    <SelectionComponent options={type} onSelect={(v) => { setDiscountType(v); setPercentageDiscount(0); setFlatDiscount(0) }} label={''} />
                                 </div>
                             </div>
                         </div>
@@ -184,6 +209,37 @@ const Invoice = ({ isOrder = true }) => {
 
 
                     </div>
+
+                    <Modal show={show} handleClose={() => { setShow(false) }} className={`w-[500px]`}>
+                        <div className='flex justify-between items-center py-1'>
+                            <h1>Name</h1>
+                            <h1>{data?.name}</h1>
+                        </div>
+                        <div className='flex justify-between items-center py-1'>
+                            <h1>Price</h1>
+                            <h1>{data?.price}</h1>
+                        </div>
+                        <div className='flex justify-between items-center py-1'>
+                            <h1>Qty</h1>
+                            <input
+                                className="text-right focus:outline-none w-12"
+                                onChange={(e) => setData({ ...data, qty: e.target.value })}
+                                // value={qty}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        setAllData([...allData, data]);
+                                        setData([]);
+                                        setShow(false);
+                                        // setQty(0)
+                                    }
+                                }}
+                                placeholder={qty}
+                            />
+                        </div>
+                        <div className='flex justify-end items-center py-1'>
+                            <MiniButton name={`Done`} onClick={() => { setAllData([...allData, data]); setData([]); setShow(false); }} />
+                        </div>
+                    </Modal>
 
 
                     <div className='relative overflow-x-auto my-5'>
@@ -207,60 +263,122 @@ const Invoice = ({ isOrder = true }) => {
                                     })
                                 }
 
-
-
-                                <Modal show={show} handleClose={() => { setShow(false) }} className={`w-[500px]`}>
-                                    <div className='flex justify-between items-center py-1'>
-                                        <h1>Name</h1>
-                                        <h1>{data?.name}</h1>
-                                    </div>
-                                    <div className='flex justify-between items-center py-1'>
-                                        <h1>Price</h1>
-                                        <h1>{data?.price}</h1>
-                                    </div>
-                                    <div className='flex justify-between items-center py-1'>
-                                        <h1>Qty</h1>
-                                        <input
-                                            className="text-right focus:outline-none w-12"
-                                            onChange={(e) => setData({ ...data, qty: e.target.value })}
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    setAllData([...allData, data]);
-                                                    setData([]);
-                                                    setShow(false)
-                                                }
-                                            }}
-                                            placeholder={data?.qty}
-                                        />
-                                    </div>
-                                    <div className='flex justify-end items-center py-1'>
-                                        <MiniButton name={`Done`} onClick={() => { setAllData([...allData, data]); setData([]); setShow(false) }} />
-                                    </div>
-                                </Modal>
-
-
-
-
                                 {allData?.map((item) => {
                                     return <InvoiceCard key={item?.id} id={item?.id} name={item?.name} qty={item?.qty} price={item?.price} />
                                 })}
-                                <PaymentTotal data={allData} discount={(e) => { setDiscount(e.target.value) }} dis={discount} discountType={discountType}/>
+                                <PaymentTotal
+                                    data={allData}
+                                    discountPercentage={(e) => { setPercentageDiscount(e.target.value) }}
+                                    discountFlat={(e) => { setFlatDiscount(e.target.value) }}
+                                    flatDiscount={flatDiscount}
+                                    percentageDiscount={percentageDiscount}
+                                    discountType={discountType}
+                                    due={due}
+                                    pay={pay}
+                                    setTotalPrice={(v) => { setTotal(v) }}
+                                />
 
                             </tbody>
                         </table>
                     </div>
                 </div>
 
+                <Modal show={isPdf} handleClose={() => { setPdf(false) }} className={`w-[1000px]`}>
+                    <div className="actual-receipt mt-2 px-10">
+                        <div className='pt-3'>
+                            <div className='flex justify-between'>
+                                <div className='flex justify-start gap-3 items-center'>
+                                    <h1 className='font-semibold w-[90px]'>ঠিকানা</h1>
+                                    <div className='flex justify-start items-center gap-3'>
+                                        <h1 className='font-semibold'>:</h1>
+                                        <input placeholder={stateName} className='border focus:outline-none rounded p-1 border-black text-black' />
+                                    </div>
+                                </div>
+                                <div className='flex justify-start gap-3 items-center'>
+                                    <h1 className='font-semibold'>তারিখ</h1>
+                                    <div className='flex justify-start items-center gap-3'>
+                                        <h1 className='font-semibold'>:</h1>
+                                        <input placeholder={date} className='border focus:outline-none rounded p-1 border-black text-black' />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='flex justify-between pb-1 pt-2'>
+                                <div className='flex justify-start gap-3 items-center'>
+                                    <h1 className='font-semibold w-[90px]'>নাম</h1>
+                                    <div className='flex justify-start items-center gap-3'>
+                                        <h1 className='font-semibold'>:</h1>
+                                        <input placeholder={name} className='border focus:outline-none rounded p-1 border-black text-black' />
+                                    </div>
+                                </div>
+                                <div className='flex justify-start gap-3 items-center'>
+                                    <h1 className='font-semibold'>মেমো নং</h1>
+                                    <div className='flex justify-start items-center gap-3'>
+                                        <h1 className='font-semibold'>:</h1>
+                                        <input placeholder={invoice_id} className='border focus:outline-none rounded p-1 border-black text-black' />
+                                    </div>
+                                </div>
+                            </div>
 
-                {/* 
-                <div className="flex justify-end my-3 mr-2">
-                    {isOrder && <button onClick={Order} className='border rounded px-4 py-1.5 mx-3 font-semibold'>Order</button>}
+                            <div className='flex justify-between'>
+                                <div className='flex justify-start gap-3 items-center py-1'>
+                                    <h1 className='font-semibold w-[90px]'>মোবাইল</h1>
+                                    <div className='flex justify-start items-center gap-3'>
+                                        <h1 className='font-semibold'>:</h1>
+                                        <input placeholder='মোবাইল নম্বর' onChange={(e) => { setMobile(e.target.value) }} className='border focus:outline-none rounded p-1 border-black text-black' />
+                                    </div>
+                                </div>
+                                <div className='flex justify-end gap-3 items-center'>
+                                    <h1 className='font-semibold'>ডিসকাউন্ট</h1>
+                                    <div className='flex justify-start items-center gap-3'>
+                                        <h1 className='font-semibold'>:</h1>
+                                        <input placeholder={discountType} className='border focus:outline-none rounded p-1 border-black text-black' />
+                                    </div>
+                                </div>
+                            </div>
 
-                </div> */}
+                        </div>
+
+                        <div className='relative overflow-x-auto py-5'>
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-900 uppercase dark:text-gray-400">
+                                    <tr className='border-b-2 border-black text-lg'>
+                                        <th scope="col" className="pr-6 py-2 ">পরিমাণ</th>
+                                        <th scope="col" className="px-4 py-2 text-center">বইয়ের নাম এবং শ্রেণী</th>
+                                        <th scope="col" className="px-4 py-2 text-center">প্রকাশক</th>
+                                        <th scope="col" className="pl-4 py-2 text-right">মূল্য</th>
+                                        <th scope="col" className="pl-4 py-2 text-right">বিক্রয় মূল্য</th>
+                                        <th scope="col" className="pl-4 py-2 text-right">মোট মূল্য</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {allData?.map((item) => {
+                                        return <InvoiceCard key={item?.id} id={item?.id} name={item?.name} qty={item?.qty} price={item?.price} />
+                                    })}
+                                    <PaymentTotal
+                                        data={allData}
+                                        discountPercentage={(e) => { setPercentageDiscount(e.target.value) }}
+                                        discountFlat={(e) => { setFlatDiscount(e.target.value) }}
+                                        flatDiscount={flatDiscount}
+                                        percentageDiscount={percentageDiscount}
+                                        discountType={discountType}
+                                        due={due}
+                                        pay={pay}
+                                        setTotalPrice={(v) => { setTotal(v) }}
+                                    />
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                    <button onClick={downloadPDF} className='border rounded px-4 py-1.5 mr-1 font-semibold'>Download</button>
+                    <button onClick={Order} className='border rounded px-4 py-1.5 mr-1 font-semibold'>Order</button>
+                </Modal>
+
 
                 {/* receipt action */}
                 <div className="flex justify-end my-3 mr-2">
-                    <button onClick={downloadPDF} className='border rounded px-4 py-1.5 mx-3 font-semibold'>Download</button>
+                    <button onClick={() => { setPdf(true) }} className='border rounded px-4 py-1.5 mx-3 font-semibold'>Generate Pdf</button>
                     <button onClick={PrintfPdf} className='border rounded px-4 py-1.5 mr-1 font-semibold'>Print</button>
                     {isOrder && <button onClick={Order} className='border rounded px-4 py-1.5 mx-3 font-semibold'>Order</button>}
                 </div>
